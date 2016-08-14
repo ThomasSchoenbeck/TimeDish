@@ -1,0 +1,111 @@
+<table>
+  <thead class="day_start_end_break">
+    <tr class="dates">
+      <td></td>
+      <td>{{monday_date}}</td>
+      <td>{{tuesday_date}}</td>
+      <td>{{wednesday_date}}</td>
+      <td>{{thursday_date}}</td>
+      <td>{{friday_date}}</td>
+      <td></td>
+    </tr>
+    <tr class="weekdays">
+      <td class="row_desc"></td>
+      <td class="monday">Montag</td>
+      <td class="tuesday">Dienstag</td>
+      <td class="wednesday">Mittwoch</td>
+      <td class="thursday">Donnerstag</td>
+      <td class="friday">Freitag</td>
+      <td></td>
+    </tr>
+    <tr class="start">
+      <td class="row_desc">Start:</td>
+      <td class="monday">{{timesheet?.monday_start}}</td>
+      <td class="tuesday">{{timesheet?.tuesday_start}}</td>
+      <td class="wednesday">{{timesheet?.wednesday_start}}</td>
+      <td class="thursday">{{timesheet?.thursday_start}}</td>
+      <td class="friday">{{timesheet?.friday_start}}</td>
+      <td></td>
+    </tr>
+    <tr class="end">
+      <td class="row_desc">End:</td>
+      <td class="monday">{{timesheet?.monday_end}}</td>
+      <td class="tuesday">{{timesheet?.tuesday_end}}</td>
+      <td class="wednesday">{{timesheet?.wednesday_end}}</td>
+      <td class="thursday">{{timesheet?.thursday_end}}</td>
+      <td class="friday">{{timesheet?.friday_end}}</td>
+      <td></td>
+    </tr>
+    <tr class="break">
+      <td class="row_desc">Break:</td>
+      <td class="monday">{{timesheet?.monday_break}}</td>
+      <td class="tuesday">{{timesheet?.tuesday_break}}</td>
+      <td class="wednesday">{{timesheet?.wednesday_break}}</td>
+      <td class="thursday">{{timesheet?.thursday_break}}</td>
+      <td class="friday">{{timesheet?.friday_break}}</td>
+      <td></td>
+    </tr>
+    <tr class="total_row">
+      <td class="row_desc">Total:</td>
+      <td class="monday">{{monday_work}}</td>
+      <td class="tuesday">{{tuesday_work}}</td>
+      <td class="wednesday">{{wednesday_work}}</td>
+      <td class="thursday">{{thursday_work}}</td>
+      <td class="friday">{{friday_work}}</td>
+      <td>{{total_work}}<td>
+    </tr>
+  </thead>
+  <tbody *ngFor="let project of projects">
+    <tr>
+      <td class="project" colspan="7">{{project.id}} - {{project.name}}</td>
+    </tr>
+    <!--<tr *ngFor="let item of timeRecords | timeRecord: project.id">-->
+    <!--<time-record colspan="3" *ngFor="let item of timeRecords | timeRecord: project.id" [item]="item" (recalc)="recalcThings(item)">-->
+    <tr *ngFor="let item of timeRecords | timeRecord: project.id" [time-record]="item" (recalc)="recalcThings(item)">
+      <!--<div *ngFor="let workpackage of workpackages | workpackage: item.workpackageId"></div>-->
+      <!--<time-record colspan="7" [item]="item" (recalc)="recalcThings($event, ngModel)"></time-record>-->
+      <!--<time-record colspan="7" [item]="item" ></time-record>-->
+      <!--<td  class="row_desc" *ngFor="let workpackage of workpackages | workpackage: item.workpackageId">{{workpackage?.name}}</td>
+      <td class="monday" id="monday"><input [(ngModel)]="item.monday_time" (keyup)="recalcThings($event)"/></td>
+      <td class="tuesday" id="tuesday">{{item.tuesday_time}}</td>
+      <td class="wednesday" id="wednesday">{{item.wednesday_time}}</td>
+      <td class="thursday" id="thursday">{{item.thursday_time}}</td>
+      <td class="friday" id="friday">{{item.friday_time}}</td>
+      <td id="row_total">{{item.row_total}}</td>-->
+    <!--</time-record>-->
+    </tr>
+  </tbody>
+  <tbody class="day_total_diff"> <!-- http://stackoverflow.com/questions/22034522/calculate-equation-like-excel-jquery -->
+    <tr class="total_row">
+      <td class="row_desc">total work:</td>
+      <td class="monday">{{monday_total}}</td>
+      <td class="tuesday">{{tuesday_total}}</td>
+      <td class="wednesday">{{wednesday_total}}</td>
+      <td class="thursday">{{thursday_total}}</td>
+      <td class="friday">{{friday_total}}</td>
+      <td>{{total_week_time}}</td>
+    </tr>
+    <tr>
+      <td class="row_desc">diff:</td>
+      <td class="monday" [class.positive]="mondayIsPositiv" [class.negative]="mondayIsNegative" id="monday_diff">{{monday_diff}}</td>
+      <!--<td class="tuesday" [class.negative]="String('-').indexOf(tuesday_diff) > 0" id="tuesday_diff">{{tuesday_diff}}</td>-->
+      <td class="tuesday" [class.positive]="tuesdayIsPositiv" [class.negative]="tuesdayIsNegative" id="tuesday_diff">{{tuesday_diff}}</td>
+      <td class="wednesday" [class.positive]="wednesdayIsPositiv" [class.negative]="wednesdayIsNegative" id="wednesday_diff">{{wednesday_diff}}</td>
+      <td class="thursday" [class.positive]="thursdayIsPositiv" [class.negative]="thursdayIsNegative" id="thursday_diff">{{thursday_diff}}</td>
+      <td class="friday" [class.positive]="fridayIsPositiv" [class.negative]="fridayIsNegative" id="friday_diff">{{friday_diff}}</td>
+      <!--<td class="wednesday" [ngClass]="setPositiveNegativeClass(wednesday_diff)" id="wednesday_diff">{{wednesday_diff}}</td>
+      <td class="thursday" [ngClass]="setPositiveNegativeClass(thursday_diff)" id="thursday_diff">{{thursday_diff}}</td>
+      <td class="friday" [ngClass]="setPositiveNegativeClass(friday_diff)" id="friday_diff">{{friday_diff}}</td>-->
+      <td></td>
+    </tr>
+    <tr>
+      <td class="row_desc">current time calculated:</td>
+      <td class="monday">{{monday_time}}</td>
+      <td class="tuesday">{{tuesday_time}}</td>
+      <td class="wednesday">{{wednesday_time}}</td>
+      <td class="thursday">{{thursday_time}}</td>
+      <td class="friday">{{friday_time}}</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>

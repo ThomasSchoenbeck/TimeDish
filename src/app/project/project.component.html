@@ -1,0 +1,10 @@
+<p>
+  project works!
+</p>
+
+<div *ngFor="let project from projects | async">
+  <div class="project">
+    {{project.id}} - {{project.name}}
+    <span class="active">{{project.active}}</span>
+  </div>
+</div>

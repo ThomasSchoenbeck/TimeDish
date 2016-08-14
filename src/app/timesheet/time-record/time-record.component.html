@@ -1,0 +1,9 @@
+<!--<tr>-->
+  <td class="row_desc">{{workpackage?.name}}</td>
+  <td class="monday" id="monday"><input type="time" [(ngModel)]="item.monday_time" (keydown.tab)="update($event, item)"/></td>
+  <td class="tuesday" id="tuesday"><input type="time" [(ngModel)]="item.tuesday_time" (keydown.tab)="update($event, item)"/></td>
+  <td class="wednesday" id="wednesday"><input type="time" [(ngModel)]="item.wednesday_time" (keydown.tab)="update($event, item)"/></td>
+  <td class="thursday" id="thursday"><input type="time" [(ngModel)]="item.thursday_time" (keydown.tab)="update($event, item)"/></td>
+  <td class="friday" id="friday"><input type="time" [(ngModel)]="item.friday_time" (keydown.tab)="update($event, item)"/></td>
+  <td id="row_total">{{item.row_total}}</td>
+<!--</tr>-->

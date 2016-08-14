@@ -1,0 +1,94 @@
+* {
+  box-sizing: border-box;
+}
+
+table {
+  col-padding: 0px;
+  col-spacing: 0px;
+  font-family: arial;
+  font-size:12px;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+
+/*.day_start_end_break > tr {
+  background: #BFD;
+}*/
+
+td {
+  padding: 5px 10px;
+  width: 200px;
+}
+
+td:not(.row_desc):not(.project) {
+  width: 90px;
+  text-align: center;
+}
+
+.dates {
+
+}
+
+.day_start_end_break > .weekdays {
+  font-weight: bold;
+}
+
+.row_desc {
+  text-align: right;
+}
+
+.day_start_end_break > .total {
+  font-weight: bold;
+} 
+
+.total_row > td {
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  font-weight: bold;
+}
+
+.project {
+  padding-left: 40px;
+  font-size:10px;
+  font-family: Verdana;
+  color: white;
+  background: #364;
+  padding: 2px 10px;
+}
+
+input {
+  background:inherit;
+  width:90px;
+  text-align: center;
+  border:0;
+}
+
+.monday {
+  background: #AABB77;
+}
+
+.tuesday {
+  background: #777799;
+}
+
+.wednesday{
+  background: #997799;
+}
+
+.thursday {
+  background: #997777;
+}
+
+.friday {
+  background: #777777;
+}
+
+.positive {
+  color:green;
+  background:lightgreen
+}
+
+.negative {
+  color: darkred;
+  background:indianred;
+}

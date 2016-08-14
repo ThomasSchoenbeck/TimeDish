@@ -17,6 +17,7 @@
     {{#each scripts.polyfills}}
     <script src="{{.}}"></script>
     {{/each}}
+    <script src="vendor/moment/moment.js"></script>
     <script>
       System.import('system-config.js').then(function () {
         System.import('main');

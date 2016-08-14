@@ -9,10 +9,14 @@
  **********************************************************************************************/
 /** Map relative paths to URLs. */
 const map: any = {
+  'd3': 'vendor/d3/build',
+  'moment': 'vendor/moment'
 };
 
 /** User packages configuration. */
 const packages: any = {
+  'd3': { main: 'd3.min.js', defaultExtension: 'js' },
+  'moment': { main: 'moment.js', format: 'js' },
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,6 +40,14 @@ const barrels: string[] = [
   // App specific barrels.
   'app',
   'app/shared',
+  'app/timesheet',
+  'app/project',
+  'app/workpackage',
+  'app/chart',
+  'app/report',
+  'app/projects',
+  'app/timesheet/time-record-item',
+  'app/timesheet/time-record',
   /** @cli-barrel */
 ];
 
