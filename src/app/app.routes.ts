@@ -7,7 +7,9 @@ import { TimesheetComponent } from './timesheet/timesheet.component';
 const routes: RouterConfig = [
   { path: 'report', component: ReportComponent },
   { path: 'project', component: ProjectComponent },
-  { path: '', component: TimesheetComponent }
+  { path: '', redirectTo: 'timesheet', pathMatch: 'full' },
+  { path: 'timesheet', component: TimesheetComponent },
+  { path: 'timesheet/:weekId', component: TimesheetComponent }
   // { path: '**', component: PageNotFoundComponent }
 ];
 

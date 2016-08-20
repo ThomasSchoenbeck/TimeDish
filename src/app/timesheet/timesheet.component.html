@@ -1,5 +1,14 @@
 <table>
-  <thead class="day_start_end_break">
+  <thead>
+  </thead>
+  <tbody>
+    <tr>
+      <td colspan="2"><button (click)="switchToPreviousWeek()"> < </button></td>
+      <td colspan="3">{{weekNumber}}</td>
+      <td colspan="2"><button (click)="switchToNextWeek()"> > </button></td>
+    </tr>
+  </tbody>
+  <tbody class="day_start_end_break">
     <tr class="dates">
       <td></td>
       <td>{{monday_date}}</td>
@@ -54,7 +63,7 @@
       <td class="friday">{{friday_work}}</td>
       <td>{{total_work}}<td>
     </tr>
-  </thead>
+  </tbody>
   <tbody *ngFor="let project of projects">
     <tr>
       <td class="project" colspan="7">{{project.id}} - {{project.name}}</td>
@@ -88,14 +97,10 @@
     <tr>
       <td class="row_desc">diff:</td>
       <td class="monday" [class.positive]="mondayIsPositiv" [class.negative]="mondayIsNegative" id="monday_diff">{{monday_diff}}</td>
-      <!--<td class="tuesday" [class.negative]="String('-').indexOf(tuesday_diff) > 0" id="tuesday_diff">{{tuesday_diff}}</td>-->
       <td class="tuesday" [class.positive]="tuesdayIsPositiv" [class.negative]="tuesdayIsNegative" id="tuesday_diff">{{tuesday_diff}}</td>
       <td class="wednesday" [class.positive]="wednesdayIsPositiv" [class.negative]="wednesdayIsNegative" id="wednesday_diff">{{wednesday_diff}}</td>
       <td class="thursday" [class.positive]="thursdayIsPositiv" [class.negative]="thursdayIsNegative" id="thursday_diff">{{thursday_diff}}</td>
       <td class="friday" [class.positive]="fridayIsPositiv" [class.negative]="fridayIsNegative" id="friday_diff">{{friday_diff}}</td>
-      <!--<td class="wednesday" [ngClass]="setPositiveNegativeClass(wednesday_diff)" id="wednesday_diff">{{wednesday_diff}}</td>
-      <td class="thursday" [ngClass]="setPositiveNegativeClass(thursday_diff)" id="thursday_diff">{{thursday_diff}}</td>
-      <td class="friday" [ngClass]="setPositiveNegativeClass(friday_diff)" id="friday_diff">{{friday_diff}}</td>-->
       <td></td>
     </tr>
     <tr>

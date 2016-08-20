@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { Http, URLSearchParams, Response } from '@angular/http';
+import { Http, Headers, RequestOptions, URLSearchParams, Response } from '@angular/http';
 
 import { Observable }     from 'rxjs/Observable';
 import '../rxjs-operators';
@@ -21,18 +21,34 @@ export class TimesheetService {
   constructor(private http: Http) { }
 
   getTimeSheetByWeekId(weekId): Observable<Timesheet> {
-    return this.http.get(this.timeSheetURL + `?weekId:${weekId}`)
+    return this.http.get(this.timeSheetURL + `?weekId=${weekId}`)
                     .map((res: Response) => {
                       let body = res.json();
                       return body[0] || { };
                     })
+                    // .map(this.extractData)
                     .catch(this.handleError)
   }
 
-  getTimeRecordByWeekId(weekId): Observable<TimeRecord[]> {
-    return this.http.get(this.timeRecordURL + `?weekId:${weekId}`)
+  // getTimeRecordByWeekId(weekId): Observable<TimeRecord[]> {
+  //   return this.http.get(this.timeRecordURL + `?weekId=${weekId}`)
+  //                   .map(this.extractData)
+  //                   .catch(this.handleError)
+  // }
+
+  createTimeSheetByWeekId(weekId): Observable<Timesheet> {
+
+    let setTime: string = '00:00';
+    // let timeSheet = new Timesheet(weekId, false, setTime, setTime, setTime, setTime, setTime, setTime, setTime, setTime, setTime, setTime, setTime, setTime, setTime, setTime, setTime, setTime, setTime, setTime, setTime, setTime, setTime);
+    let timeSheet = new Timesheet(weekId, weekId, false, setTime);
+
+    let body = JSON.stringify({ timeSheet });
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let options = new RequestOptions({ headers: headers });
+
+    return this.http.post(this.timeSheetURL, timeSheet, options)
                     .map(this.extractData)
-                    .catch(this.handleError)
+                    .catch(this.handleError);
   }
 
   private extractData(res: Response) {

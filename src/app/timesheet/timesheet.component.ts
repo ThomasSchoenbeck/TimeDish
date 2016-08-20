@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { Timesheet } from '../models/timesheet.model';
 import { TimeRecord } from '../models/time-record.model';
 import { TimeRecordComponent } from './time-record/time-record.component';
 import { TimesheetService } from '../shared/timesheet.service';
+import { TimeRecordService } from '../shared/time-record.service';
 
 import { Project } from '../models/project.model';
 import { ProjectsService } from '../shared/projects.service';
@@ -24,7 +26,7 @@ import * as m3 from 'moment';
   templateUrl: 'timesheet.component.html',
   styleUrls: ['timesheet.component.css'],
   directives: [ TimeRecordComponent ],
-  providers: [ TimesheetService, ProjectsService, WorkpackageService ],
+  providers: [ TimesheetService, TimeRecordService, ProjectsService, WorkpackageService ],
   pipes: [ ProjectPipe, WorkpackagePipe, TimeRecordPipe ]
 })
 export class TimesheetComponent implements OnInit {
@@ -33,6 +35,15 @@ export class TimesheetComponent implements OnInit {
   private timeRecords: TimeRecord[];
   private projects: Project[];
   private workpackages: Workpackage[];
+
+  private weekNumber: number;
+  private routerWeekNumber: number;
+  private newWeekNumber: number;
+  private routerWeekSet: boolean = false;
+
+  private week: number;
+  private year: number;
+  private dataForTimesheet: boolean = false;
 
   private monday_work: string;
   private tuesday_work: string;
@@ -77,7 +88,17 @@ export class TimesheetComponent implements OnInit {
   private thursday_time: string;
   private friday_time: String;
 
-  constructor(private timesheetService: TimesheetService, private projectService: ProjectsService, private workpackageService: WorkpackageService) { }
+  constructor(private timesheetService: TimesheetService, private timeRecordService: TimeRecordService, private projectService: ProjectsService, private workpackageService: WorkpackageService, private router: Router, private activatedRoute: ActivatedRoute) { }
+
+  switchToPreviousWeek() {
+    this.newWeekNumber = this.weekNumber - 1; 
+    this.router.navigate(['/timesheet', this.newWeekNumber]);
+  }
+
+  switchToNextWeek() {
+    this.newWeekNumber = this.weekNumber + 1; 
+    this.router.navigate(['/timesheet', this.newWeekNumber]);
+  }
 
   changeMinutes(day_time) {
     // console.log(`changeMinutes: day_time: ${day_time}`);
@@ -237,18 +258,17 @@ currentTimeCalculated() {
     // checkPositiveNegative
     let negativeSymbol:string = '-';
 
-    console.log(`pos neg class: indexOf(${this.monday_diff}) = ${this.monday_diff.indexOf(negativeSymbol)}`)
-    console.log(`pos neg class: indexOf(${this.tuesday_diff}) = ${this.tuesday_diff.indexOf(negativeSymbol)}`)
-    console.log(`pos neg class: indexOf(${this.wednesday_diff}) = ${this.wednesday_diff.indexOf(negativeSymbol)}`)
-    console.log(`pos neg class: indexOf(${this.thursday_diff}) = ${this.thursday_diff.indexOf(negativeSymbol)}`)
-    console.log(`pos neg class: indexOf(${this.friday_diff}) = ${this.friday_diff.indexOf(negativeSymbol)}`)
+    // console.log(`pos neg class: indexOf(${this.monday_diff}) = ${this.monday_diff.indexOf(negativeSymbol)}`)
+    // console.log(`pos neg class: indexOf(${this.tuesday_diff}) = ${this.tuesday_diff.indexOf(negativeSymbol)}`)
+    // console.log(`pos neg class: indexOf(${this.wednesday_diff}) = ${this.wednesday_diff.indexOf(negativeSymbol)}`)
+    // console.log(`pos neg class: indexOf(${this.thursday_diff}) = ${this.thursday_diff.indexOf(negativeSymbol)}`)
+    // console.log(`pos neg class: indexOf(${this.friday_diff}) = ${this.friday_diff.indexOf(negativeSymbol)}`)
 
     let positivString:string = '00:00';
 
     if (this.monday_diff.indexOf(negativeSymbol) != -1) {
       this.mondayIsNegative = true;
-    }
-    if (this.monday_diff === positivString) {
+    } else if (this.monday_diff === positivString) {
       this.mondayIsPositiv = true;
     }
     if (this.tuesday_diff.indexOf(negativeSymbol) != -1) {
@@ -297,82 +317,43 @@ recalcThings(item) {
   this.currentTimeCalculated();
 }
 
-  ngOnInit() {
-
-    let date = new Date();
-
-    let currentThursday = new Date(date.getTime() + (3-((date.getDay()+6) % 7 )) * 86400000);
-
-    let yearOfThursday = currentThursday.getFullYear();
-
-    let firstThursday = new Date(new Date(yearOfThursday, 0, 4).getTime() +(3-((new Date(yearOfThursday, 0, 4).getDay()+6) % 7)) * 86400000);
-
-    let weekNumber = Math.floor(1 + 0.5 + (currentThursday.getTime() - firstThursday.getTime()) / 86400000/7);
-
-    console.log(`Timesheet Component: Date: ${date}`);
-    console.log(`Timesheet Component: currentThursday ${currentThursday}`);
-    console.log(`Timesheet Component: yearOfThursday ${yearOfThursday}`);
-    console.log(`Timesheet Component: firstThursday ${firstThursday}`);
-    console.log(`Timesheet Component: weekNumber ${weekNumber}`);
-
-    this.monday_date = moment(date).startOf('isoweek').format('DD.MM.');
-    this.tuesday_date = moment(date).startOf('isoweek').day('tuesday').format('DD.MM.');
-    this.wednesday_date = moment(date).startOf('isoweek').day('wednesday').format('DD.MM.');
-    this.thursday_date = moment(date).startOf('isoweek').day('thursday').format('DD.MM.');
-    this.friday_date = moment(date).startOf('isoweek').day('friday').format('DD.MM.');
-    // this.monday_date = moment(date).startOf('isoweek').toDate();
-    // console.log(`monday_date: ${this.monday_date}`);
-    // this.monday_date = moment(date).day('monday').toDate().toLocaleDateString('de-DE','dd.MM.YYYY');
-
-    console.log(`monday_date: ${this.monday_date}`);
-
+  initTimeSheet(weekNumber) {
     this.timesheetService.getTimeSheetByWeekId(weekNumber).subscribe(data => {
-      this.timesheet = data;
-      // console.log(`Timesheet Component: this.timesheet: ${JSON.stringify(this.timesheet)}`);
+      console.log(data);
+      if (Object.keys(data).length == 0) {
+        console.log(`no data for timesheet, creating week`);
+        this.timesheetService.createTimeSheetByWeekId(weekNumber).subscribe(data => {
+          this.timesheet = data;
+          this.calcWork();
+          this.initTimeSheetRecords(this.weekNumber);
+        });
+      } else {
+        this.timesheet = data;
+        this.calcWork();
+        this.initTimeSheetRecords(this.weekNumber);
+      }
+    });
+  }
 
-      let monday_start = new Date('01/01/2017 ' + this.timesheet.monday_start).getHours() + new Date('01/01/2017 ' + this.timesheet.monday_start).getMinutes();
-      console.log(`monday_end: hours: ${new Date('01/01/2017 ' + this.timesheet.monday_end).getHours()}`);
-      console.log(`monday_end: minutes: ${new Date('01/01/2017 ' + this.timesheet.monday_end).getMinutes()}`);
-      let monday_end = new Date('01/01/2017 ' + this.timesheet.monday_end).getHours();
-      let monday_break = new Date('01/01/2017 ' + this.timesheet.monday_break).getHours();
+  initTimeSheetRecords(weekNumber) {
+    this.timeRecordService.getTimeRecordByWeekId(weekNumber).subscribe(data => {
+      console.log(data);
+      if (Object.keys(data).length == 0) {
+        console.log(`no data for timerecord, creating week`);
+        this.timeRecords = undefined;
+        this.projects = undefined;
+        this.monday_total = '00:00';
+        this.tuesday_total = '00:00';
+        this.wednesday_total = '00:00';
+        this.thursday_total = '00:00';
+        this.friday_total = '00:00';
+        this.total_week_time = '00:00';
 
-      console.log(`monday_total: end(${monday_end}) - start(${monday_start}) - break(${monday_break}) =  ${monday_end - monday_start - monday_break}`)
+        this.calcDifferences();
+        this.currentTimeCalculated();
 
-      console.log(`changing time to string: monday_start: ${this.changeMinutes(this.timesheet.monday_start)}`);
-      console.log(`changing time to string: monday_end: ${this.changeMinutes(this.timesheet.monday_end)}`);
-      console.log(`changing time to string: monday_break: ${this.changeMinutes(this.timesheet.monday_break)}`);
+      } else {
 
-      console.log(`calc time from number: ${this.changeMinutes(this.timesheet.monday_end) - this.changeMinutes(this.timesheet.monday_start) - this.changeMinutes(this.timesheet.monday_break)}`);
-
-      console.log(`calc monday_total: ${this.changeBack(this.changeMinutes(this.timesheet.monday_end) - this.changeMinutes(this.timesheet.monday_start) - this.changeMinutes(this.timesheet.monday_break))}`);
-
-      // this.monday_total = (monday_end - monday_start - monday_break).toString();
-      // if (+this.monday_total % 1 != 0) {
-      //   this.monday_total = this.monday_total + ':00';
-      // } else {
-      //   this.monday_total = this.monday_total + '';
-      // }
-
-      this.calcWork();
-
-      // this.monday_work = this.changeBack(this.changeMinutes(this.timesheet.monday_end) - this.changeMinutes(this.timesheet.monday_start) - this.changeMinutes(this.timesheet.monday_break));
-      // this.tuesday_work = this.changeBack(this.changeMinutes(this.timesheet.tuesday_end) - this.changeMinutes(this.timesheet.tuesday_start) - this.changeMinutes(this.timesheet.tuesday_break));
-      // this.wednesday_work = this.changeBack(this.changeMinutes(this.timesheet.wednesday_end) - this.changeMinutes(this.timesheet.wednesday_start) - this.changeMinutes(this.timesheet.wednesday_break));
-      // this.thursday_work = this.changeBack(this.changeMinutes(this.timesheet.thursday_end) - this.changeMinutes(this.timesheet.thursday_start) - this.changeMinutes(this.timesheet.thursday_break));
-      // this.friday_work = this.changeBack(this.changeMinutes(this.timesheet.friday_end) - this.changeMinutes(this.timesheet.friday_start) - this.changeMinutes(this.timesheet.friday_break));
-      
-      // this.total_work = this.changeBack(
-      //   this.changeMinutes(this.monday_work) + this.changeMinutes(this.tuesday_work) + this.changeMinutes(this.wednesday_work)
-      //   + this.changeMinutes(this.thursday_work) + this.changeMinutes(this.friday_work)
-      // );
-
-      // console.warn(`Timesheet Component: this.monday_work ${this.monday_work}`);
-      // console.warn(`Timesheet Component: this.total_work ${this.total_work}`);
-      // console.warn(`Timesheet Component: this.timesheet.monday_start ${this.timesheet.monday_start}`);
-
-    })
-
-    this.timesheetService.getTimeRecordByWeekId(weekNumber).subscribe(data => {
       this.timeRecords = data;
       // console.log(`Timesheet Component: this.timeRecords: ${JSON.stringify(this.timeRecords)}`);
 
@@ -455,9 +436,58 @@ recalcThings(item) {
           // console.log(`Timesheet Component: this.projects: ${JSON.stringify(this.projects)}`);
         });
       // });
+      }
       
     });
+  }
 
+  startComponent() {
+
+    console.log(`setting date that is not used`);
+    let date = new Date();
+
+    console.log(`update week and year`);
+    if (this.routerWeekSet) {
+      this.weekNumber = this.routerWeekNumber;
+      this.week = parseInt(this.weekNumber.toString().substr(4, 2));
+      this.year = parseInt(this.weekNumber.toString().substr(0, 4));
+    } else {
+      this.weekNumber = parseInt(moment().year().toString() + moment().isoWeek().toString());
+      this.week = moment().isoWeek();
+      this.year = moment().year(); 
+    }
+
+    console.log(`Week: ${this.week}, Year: ${this.year}`);
+
+    this.monday_date = moment().year(this.year).isoWeek(this.week).day('monday').format('DD.MM.');
+    this.tuesday_date = moment().year(this.year).isoWeek(this.week).day('tuesday').format('DD.MM.');
+    this.wednesday_date = moment().year(this.year).isoWeek(this.week).day('wednesday').format('DD.MM.');
+    this.thursday_date = moment().year(this.year).isoWeek(this.week).day('thursday').format('DD.MM.');
+    this.friday_date = moment().year(this.year).isoWeek(this.week).day('friday').format('DD.MM.');
+ 
+    // this.monday_date = moment(date).startOf('isoweek').toDate();
+    // console.log(`monday_date: ${this.monday_date}`);
+    // this.monday_date = moment(date).day('monday').toDate().toLocaleDateString('de-DE','dd.MM.YYYY');
+
+    // console.log(`monday_date: ${this.monday_date}`);
+
+    this.initTimeSheet(this.weekNumber);
+
+  }
+
+  ngOnInit() {
+
+    this.activatedRoute.params.subscribe(params => {
+      this.routerWeekNumber = Number.parseInt(params['weekId']); 
+      if (!isNaN(this.routerWeekNumber)) {
+        this.routerWeekSet = true; 
+        console.log(`checking router params: have been set: ${this.routerWeekSet} | routerWeekNumber: ${this.routerWeekNumber}`);
+      } else {
+        this.routerWeekSet = false;
+        console.log(`checking router params: have been set: ${this.routerWeekSet} | routerWeekNumber: ${this.routerWeekNumber}`);
+      }
+      this.startComponent();
+    });
 
   }
 

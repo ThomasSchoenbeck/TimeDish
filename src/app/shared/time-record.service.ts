@@ -18,7 +18,7 @@ export class TimeRecordService {
   constructor(private http: Http) { }
 
   getTimeRecordByWeekId(weekId): Observable<TimeRecord[]> {
-    return this.http.get(this.timeRecordURL + `?weekId:${weekId}`)
+    return this.http.get(this.timeRecordURL + `?weekId=${weekId}`)
                     .map(this.extractData)
                     .catch(this.handleError)
   }
