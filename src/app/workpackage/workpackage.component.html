@@ -1,3 +1,9 @@
-<p>
-  workpackage works!
-</p>
+<div class="workpackageComponent">
+  <div>Workpackages</div>
+  <div *ngFor="let workpackage of workpackages">
+    <div class="workpackage" [class.activeWorkpackage]="workpackage.active" (click)="addWorkpackageToTimesheet(workpackage)">
+      <!--<input type="checkbox" [(ngModel)]="workpackage.selected"/>-->
+      {{workpackage.id}} - {{workpackage.name}}
+    </div>
+  </div>
+</div>

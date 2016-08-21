@@ -1,3 +1,5 @@
+<project></project>
+
 <table>
   <thead>
   </thead>
@@ -8,7 +10,7 @@
       <td colspan="2"><button (click)="switchToNextWeek()"> > </button></td>
     </tr>
   </tbody>
-  <tbody class="day_start_end_break">
+  <tbody class="day_start_end_break" *ngIf="timesheet">
     <tr class="dates">
       <td></td>
       <td>{{monday_date}}</td>
@@ -29,29 +31,29 @@
     </tr>
     <tr class="start">
       <td class="row_desc">Start:</td>
-      <td class="monday">{{timesheet?.monday_start}}</td>
-      <td class="tuesday">{{timesheet?.tuesday_start}}</td>
-      <td class="wednesday">{{timesheet?.wednesday_start}}</td>
-      <td class="thursday">{{timesheet?.thursday_start}}</td>
-      <td class="friday">{{timesheet?.friday_start}}</td>
+      <td class="monday"><input type="time" [(ngModel)]="timesheet.monday_start" (keydown.tab)="update(timesheet)"/></td>
+      <td class="tuesday"><input type="time" [(ngModel)]="timesheet.tuesday_start" (keydown.tab)="update(timesheet)"/></td>
+      <td class="wednesday"><input type="time" [(ngModel)]="timesheet.wednesday_start" (keydown.tab)="update(timesheet)"/></td>
+      <td class="thursday"><input type="time" [(ngModel)]="timesheet.thursday_start" (keydown.tab)="update(timesheet)"/></td>
+      <td class="friday"><input type="time" [(ngModel)]="timesheet.friday_start" (keydown.tab)="update(timesheet)"/></td>
       <td></td>
     </tr>
     <tr class="end">
       <td class="row_desc">End:</td>
-      <td class="monday">{{timesheet?.monday_end}}</td>
-      <td class="tuesday">{{timesheet?.tuesday_end}}</td>
-      <td class="wednesday">{{timesheet?.wednesday_end}}</td>
-      <td class="thursday">{{timesheet?.thursday_end}}</td>
-      <td class="friday">{{timesheet?.friday_end}}</td>
+      <td class="monday"><input type="time" [(ngModel)]="timesheet.monday_end" (keydown.tab)="update(timesheet)"/></td>
+      <td class="tuesday"><input type="time" [(ngModel)]="timesheet.tuesday_end" (keydown.tab)="update(timesheet)"/></td>
+      <td class="wednesday"><input type="time" [(ngModel)]="timesheet.wednesday_end" (keydown.tab)="update(timesheet)"/></td>
+      <td class="thursday"><input type="time" [(ngModel)]="timesheet.thursday_end" (keydown.tab)="update(timesheet)"/></td>
+      <td class="friday"><input type="time" [(ngModel)]="timesheet.friday_end" (keydown.tab)="update(timesheet)"/></td>
       <td></td>
     </tr>
     <tr class="break">
       <td class="row_desc">Break:</td>
-      <td class="monday">{{timesheet?.monday_break}}</td>
-      <td class="tuesday">{{timesheet?.tuesday_break}}</td>
-      <td class="wednesday">{{timesheet?.wednesday_break}}</td>
-      <td class="thursday">{{timesheet?.thursday_break}}</td>
-      <td class="friday">{{timesheet?.friday_break}}</td>
+      <td class="monday"><input type="time" [(ngModel)]="timesheet.monday_break" (keydown.tab)="update(timesheet)"/></td>
+      <td class="tuesday"><input type="time" [(ngModel)]="timesheet.tuesday_break" (keydown.tab)="update(timesheet)"/></td>
+      <td class="wednesday"><input type="time" [(ngModel)]="timesheet.wednesday_break" (keydown.tab)="update(timesheet)"/></td>
+      <td class="thursday"><input type="time" [(ngModel)]="timesheet.thursday_break" (keydown.tab)="update(timesheet)"/></td>
+      <td class="friday"><input type="time" [(ngModel)]="timesheet.friday_break" (keydown.tab)="update(timesheet)"/></td>
       <td></td>
     </tr>
     <tr class="total_row">
@@ -64,24 +66,11 @@
       <td>{{total_work}}<td>
     </tr>
   </tbody>
-  <tbody *ngFor="let project of projects">
+  <tbody *ngFor="let project of timesheetProjects">
     <tr>
       <td class="project" colspan="7">{{project.id}} - {{project.name}}</td>
     </tr>
-    <!--<tr *ngFor="let item of timeRecords | timeRecord: project.id">-->
-    <!--<time-record colspan="3" *ngFor="let item of timeRecords | timeRecord: project.id" [item]="item" (recalc)="recalcThings(item)">-->
     <tr *ngFor="let item of timeRecords | timeRecord: project.id" [time-record]="item" (recalc)="recalcThings(item)">
-      <!--<div *ngFor="let workpackage of workpackages | workpackage: item.workpackageId"></div>-->
-      <!--<time-record colspan="7" [item]="item" (recalc)="recalcThings($event, ngModel)"></time-record>-->
-      <!--<time-record colspan="7" [item]="item" ></time-record>-->
-      <!--<td  class="row_desc" *ngFor="let workpackage of workpackages | workpackage: item.workpackageId">{{workpackage?.name}}</td>
-      <td class="monday" id="monday"><input [(ngModel)]="item.monday_time" (keyup)="recalcThings($event)"/></td>
-      <td class="tuesday" id="tuesday">{{item.tuesday_time}}</td>
-      <td class="wednesday" id="wednesday">{{item.wednesday_time}}</td>
-      <td class="thursday" id="thursday">{{item.thursday_time}}</td>
-      <td class="friday" id="friday">{{item.friday_time}}</td>
-      <td id="row_total">{{item.row_total}}</td>-->
-    <!--</time-record>-->
     </tr>
   </tbody>
   <tbody class="day_total_diff"> <!-- http://stackoverflow.com/questions/22034522/calculate-equation-like-excel-jquery -->

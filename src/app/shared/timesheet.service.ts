@@ -16,7 +16,6 @@ export class TimesheetService {
   private timeRecord: TimeRecord;
 
   private timeSheetURL = environment.API_BASE_URL + '/timesheet';
-  private timeRecordURL = environment.API_BASE_URL + '/timerecord';
 
   constructor(private http: Http) { }
 
@@ -30,11 +29,18 @@ export class TimesheetService {
                     .catch(this.handleError)
   }
 
-  // getTimeRecordByWeekId(weekId): Observable<TimeRecord[]> {
-  //   return this.http.get(this.timeRecordURL + `?weekId=${weekId}`)
-  //                   .map(this.extractData)
-  //                   .catch(this.handleError)
-  // }
+updateTimesheet(timesheet: Timesheet): Observable<Timesheet> {
+    let body = JSON.stringify({ timesheet });
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let options = new RequestOptions({ headers: headers });
+
+    console.log(timesheet);
+    console.log(body);
+
+    return this.http.put(this.timeSheetURL + '/' + timesheet.id , timesheet, options)
+                    .map(this.extractData)
+                    .catch(this.handleError);
+  }
 
   createTimeSheetByWeekId(weekId): Observable<Timesheet> {
 

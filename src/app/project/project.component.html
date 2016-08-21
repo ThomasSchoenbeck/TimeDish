@@ -1,10 +1,10 @@
-<p>
-  project works!
-</p>
-
-<div *ngFor="let project from projects | async">
-  <div class="project">
-    {{project.id}} - {{project.name}}
-    <span class="active">{{project.active}}</span>
+<div class="projectComponent">
+  <div>Projects</div>
+  <div *ngFor="let project of projects">
+    <div class="project" [class.activeProject]="project.active" (click)="selectProject(project)">
+      <input type="checkbox" [(ngModel)]="project.selected"/>
+      {{project.id}} - {{project.name}}
+      <!--<span class="active">{{project.active}}</span>-->
+    </div>
   </div>
 </div>

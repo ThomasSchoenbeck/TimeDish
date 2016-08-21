@@ -8,6 +8,7 @@ import { TimesheetService } from '../shared/timesheet.service';
 import { TimeRecordService } from '../shared/time-record.service';
 
 import { Project } from '../models/project.model';
+import { ProjectComponent } from '../project/project.component';
 import { ProjectsService } from '../shared/projects.service';
 import { Workpackage } from '../models/workpackage.model';
 import { WorkpackageService } from '../shared/workpackage.service';
@@ -25,7 +26,7 @@ import * as m3 from 'moment';
   selector: 'app-timesheet',
   templateUrl: 'timesheet.component.html',
   styleUrls: ['timesheet.component.css'],
-  directives: [ TimeRecordComponent ],
+  directives: [ TimeRecordComponent, ProjectComponent ],
   providers: [ TimesheetService, TimeRecordService, ProjectsService, WorkpackageService ],
   pipes: [ ProjectPipe, WorkpackagePipe, TimeRecordPipe ]
 })
@@ -33,7 +34,7 @@ export class TimesheetComponent implements OnInit {
 
   private timesheet: Timesheet;
   private timeRecords: TimeRecord[];
-  private projects: Project[];
+  private timesheetProjects: Project[];
   private workpackages: Workpackage[];
 
   private weekNumber: number;
@@ -146,7 +147,7 @@ export class TimesheetComponent implements OnInit {
 
   }
 
-  recalcMondayTotal(){
+  recalcTotals(){
     // let mondays = document.getElementsByClassName('monday');
 
     // console.log(mondays);
@@ -233,15 +234,15 @@ export class TimesheetComponent implements OnInit {
     return classes; 
   }
 
-currentTimeCalculated() {
-  this.monday_time = this.changeBack(this.changeMinutes(this.timesheet.monday_start) + this.changeMinutes(this.monday_total));
-  this.tuesday_time = this.changeBack(this.changeMinutes(this.timesheet.tuesday_start) + this.changeMinutes(this.tuesday_total));
-  this.wednesday_time = this.changeBack(this.changeMinutes(this.timesheet.wednesday_start) + this.changeMinutes(this.wednesday_total));
-  this.thursday_time = this.changeBack(this.changeMinutes(this.timesheet.thursday_start) + this.changeMinutes(this.thursday_total));
-  this.friday_time = this.changeBack(this.changeMinutes(this.timesheet.friday_start) + this.changeMinutes(this.friday_total));
+  currentTimeCalculated() {
+    this.monday_time = this.changeBack(this.changeMinutes(this.timesheet.monday_start) + this.changeMinutes(this.monday_total));
+    this.tuesday_time = this.changeBack(this.changeMinutes(this.timesheet.tuesday_start) + this.changeMinutes(this.tuesday_total));
+    this.wednesday_time = this.changeBack(this.changeMinutes(this.timesheet.wednesday_start) + this.changeMinutes(this.wednesday_total));
+    this.thursday_time = this.changeBack(this.changeMinutes(this.timesheet.thursday_start) + this.changeMinutes(this.thursday_total));
+    this.friday_time = this.changeBack(this.changeMinutes(this.timesheet.friday_start) + this.changeMinutes(this.friday_total));
 
-  console.log(`currentTimeCalculated: monday_time: ${this.monday_time}`);
-}
+    console.log(`currentTimeCalculated: monday_time: ${this.monday_time}`);
+  }
 
   calcDifferences() {
     // this.monday_diff = (this.changeMinutes(this.monday_total) - this.changeMinutes(this.monday_work)).toString();
@@ -294,28 +295,28 @@ currentTimeCalculated() {
 
   }
 
-calcWork() {
-  this.monday_work = this.changeBack(this.changeMinutes(this.timesheet.monday_end) - this.changeMinutes(this.timesheet.monday_start) - this.changeMinutes(this.timesheet.monday_break));
-  this.tuesday_work = this.changeBack(this.changeMinutes(this.timesheet.tuesday_end) - this.changeMinutes(this.timesheet.tuesday_start) - this.changeMinutes(this.timesheet.tuesday_break));
-  this.wednesday_work = this.changeBack(this.changeMinutes(this.timesheet.wednesday_end) - this.changeMinutes(this.timesheet.wednesday_start) - this.changeMinutes(this.timesheet.wednesday_break));
-  this.thursday_work = this.changeBack(this.changeMinutes(this.timesheet.thursday_end) - this.changeMinutes(this.timesheet.thursday_start) - this.changeMinutes(this.timesheet.thursday_break));
-  this.friday_work = this.changeBack(this.changeMinutes(this.timesheet.friday_end) - this.changeMinutes(this.timesheet.friday_start) - this.changeMinutes(this.timesheet.friday_break));
-      
-  this.total_work = this.changeBack(this.changeMinutes(this.monday_work) + this.changeMinutes(this.tuesday_work) + this.changeMinutes(this.wednesday_work) + this.changeMinutes(this.thursday_work) + this.changeMinutes(this.friday_work));
+  calcWork() {
+    this.monday_work = this.changeBack(this.changeMinutes(this.timesheet.monday_end) - this.changeMinutes(this.timesheet.monday_start) - this.changeMinutes(this.timesheet.monday_break));
+    this.tuesday_work = this.changeBack(this.changeMinutes(this.timesheet.tuesday_end) - this.changeMinutes(this.timesheet.tuesday_start) - this.changeMinutes(this.timesheet.tuesday_break));
+    this.wednesday_work = this.changeBack(this.changeMinutes(this.timesheet.wednesday_end) - this.changeMinutes(this.timesheet.wednesday_start) - this.changeMinutes(this.timesheet.wednesday_break));
+    this.thursday_work = this.changeBack(this.changeMinutes(this.timesheet.thursday_end) - this.changeMinutes(this.timesheet.thursday_start) - this.changeMinutes(this.timesheet.thursday_break));
+    this.friday_work = this.changeBack(this.changeMinutes(this.timesheet.friday_end) - this.changeMinutes(this.timesheet.friday_start) - this.changeMinutes(this.timesheet.friday_break));
+        
+    this.total_work = this.changeBack(this.changeMinutes(this.monday_work) + this.changeMinutes(this.tuesday_work) + this.changeMinutes(this.wednesday_work) + this.changeMinutes(this.thursday_work) + this.changeMinutes(this.friday_work));
 
-  console.warn(`Timesheet Component: this.monday_work ${this.monday_work}`);
-  console.warn(`Timesheet Component: this.total_work ${this.total_work}`);
-  console.warn(`Timesheet Component: this.timesheet.monday_start ${this.timesheet.monday_start}`);
-}
+    console.warn(`Timesheet Component: this.monday_work ${this.monday_work}`);
+    console.warn(`Timesheet Component: this.total_work ${this.total_work}`);
+    console.warn(`Timesheet Component: this.timesheet.monday_start ${this.timesheet.monday_start}`);
+  }
 
-recalcThings(item) {
-  // console.info(`recalcThings() using event: ${JSON.stringify(event)}`);
-  console.info(`recalcThings() using ngModel: ${JSON.stringify(item)}`);
-        this.recalcMondayTotal();
-  this.calcWork();
-  this.calcDifferences();
-  this.currentTimeCalculated();
-}
+  recalcThings(item) {
+    // console.info(`recalcThings() using event: ${JSON.stringify(event)}`);
+    console.info(`recalcThings() using ngModel: ${JSON.stringify(item)}`);
+    this.recalcTotals();
+    this.calcWork();
+    this.calcDifferences();
+    this.currentTimeCalculated();
+  }
 
   initTimeSheet(weekNumber) {
     this.timesheetService.getTimeSheetByWeekId(weekNumber).subscribe(data => {
@@ -341,7 +342,7 @@ recalcThings(item) {
       if (Object.keys(data).length == 0) {
         console.log(`no data for timerecord, creating week`);
         this.timeRecords = undefined;
-        this.projects = undefined;
+        this.timesheetProjects = undefined;
         this.monday_total = '00:00';
         this.tuesday_total = '00:00';
         this.wednesday_total = '00:00';
@@ -354,88 +355,61 @@ recalcThings(item) {
 
       } else {
 
-      this.timeRecords = data;
-      // console.log(`Timesheet Component: this.timeRecords: ${JSON.stringify(this.timeRecords)}`);
+        this.timeRecords = data;
+        // console.log(`Timesheet Component: this.timeRecords: ${JSON.stringify(this.timeRecords)}`);
 
-      let ArrayOfProjects = [];
-      let ArrayOfWorkpackages = [];
+        let ArrayOfProjects = [];
+        let ArrayOfWorkpackages = [];
 
-      this.total_week_time = '';
-      this.monday_total = '';
+        this.total_week_time = '';
+        this.monday_total = '';
 
-      this.timeRecords.forEach((element) => {
-        // console.log(`Timesheet Component: this.timeRecords forEach(): element.projectId: ${element.projectId} && element.workpackageId: ${element.workpackageId}`);
+        this.timeRecords.forEach((element) => {
 
+          element.row_total = (this.changeMinutes(element.monday_time) + this.changeMinutes(element.tuesday_time) + this.changeMinutes(element.wednesday_time) + this.changeMinutes(element.thursday_time) + this.changeMinutes(element.friday_time)).toString();
 
-        // console.log(`Calc: ${this.changeMinutes(element.monday_time) + this.changeMinutes(element.tuesday_time) + this.changeMinutes(element.wednesday_time) + this.changeMinutes(element.thursday_time) + this.changeMinutes(element.friday_time)}`);
+          if (this.total_week_time !== '') {
+            this.total_week_time = (+this.total_week_time + +element.row_total).toString();
+          } else {
+            this.total_week_time = element.row_total.toString();
+          }
+    
+          if (this.monday_total !== '' && this.tuesday_total !== '' && this.wednesday_total !== '' && this.thursday_total !== '' && this.friday_total !== '' ) {
+            this.monday_total = (+this.monday_total + +this.changeMinutes(element.monday_time)).toString();
+            this.tuesday_total = (+this.tuesday_total + +this.changeMinutes(element.tuesday_time)).toString();
+            this.wednesday_total = (+this.wednesday_total + +this.changeMinutes(element.wednesday_time)).toString();
+            this.thursday_total = (+this.thursday_total + +this.changeMinutes(element.thursday_time)).toString();
+            this.friday_total = (+this.friday_total + +this.changeMinutes(element.friday_time)).toString();
+          } else {
+            this.monday_total = this.changeMinutes(element.monday_time).toString();
+            this.tuesday_total = this.changeMinutes(element.tuesday_time).toString();
+            this.wednesday_total = this.changeMinutes(element.wednesday_time).toString();
+            this.thursday_total = this.changeMinutes(element.thursday_time).toString();
+            this.friday_total = this.changeMinutes(element.friday_time).toString();
+          }
 
-        element.row_total = (this.changeMinutes(element.monday_time) + this.changeMinutes(element.tuesday_time) + this.changeMinutes(element.wednesday_time) + this.changeMinutes(element.thursday_time) + this.changeMinutes(element.friday_time)).toString();
-        // console.log(`element.row_total: ${element.row_total} and as string: ${element.row_total.toString()}`);
+          element.row_total = this.changeBack(element.row_total);
 
-        // console.log(`Timesheet Component: this.total_week_time: before: ${this.total_week_time}`);
-        if (this.total_week_time !== '') {
-          this.total_week_time = (+this.total_week_time + +element.row_total).toString();
-        } else {
-          this.total_week_time = element.row_total.toString();
-        }
-        // console.log(`Timesheet Component: this.total_week_time: after: ${this.total_week_time}`);
+          if (ArrayOfProjects.indexOf(element.projectId) != 0 ) {
+            ArrayOfProjects.push( { 'id' : element.projectId } );
+          }
 
-        // console.log(`Timesheet Component: this.monday_total: before: ${this.monday_total}`);
-        // console.log(`element.monday_time: ${element.monday_time}`);
-        if (this.monday_total !== '' && this.tuesday_total !== '' && this.wednesday_total !== '' && this.thursday_total !== '' && this.friday_total !== '' ) {
-          this.monday_total = (+this.monday_total + +this.changeMinutes(element.monday_time)).toString();
-          this.tuesday_total = (+this.tuesday_total + +this.changeMinutes(element.tuesday_time)).toString();
-          this.wednesday_total = (+this.wednesday_total + +this.changeMinutes(element.wednesday_time)).toString();
-          this.thursday_total = (+this.thursday_total + +this.changeMinutes(element.thursday_time)).toString();
-          this.friday_total = (+this.friday_total + +this.changeMinutes(element.friday_time)).toString();
-        } else {
-          this.monday_total = this.changeMinutes(element.monday_time).toString();
-          this.tuesday_total = this.changeMinutes(element.tuesday_time).toString();
-          this.wednesday_total = this.changeMinutes(element.wednesday_time).toString();
-          this.thursday_total = this.changeMinutes(element.thursday_time).toString();
-          this.friday_total = this.changeMinutes(element.friday_time).toString();
-        }
-        // console.log(`Timesheet Component: this.monday_total: after: ${this.monday_total}`);
-
-        // this.monday_total = this.changeBack(this.monday_total);
-        element.row_total = this.changeBack(element.row_total);
-
-        // console.log(`Timesheet Component: projectId(${element.projectId}) IndexOf: ${ArrayOfProjects.indexOf(element.projectId)}`);
-        if (ArrayOfProjects.indexOf(element.projectId) != 0 ) {
-          ArrayOfProjects.push( { 'id' : element.projectId } );
-        }
-
-        // console.log(`Timesheet Component: workpackage IndexOf: ${ArrayOfProjects.indexOf(element.workpackageId)}`);
-        // if (ArrayOfProjects.indexOf(element.workpackageId) != 0 ) {
-        //   ArrayOfWorkpackages.push( { 'id' : element.workpackageId } );
-        // }
-
-      }
-      );
-
-      this.total_week_time = this.changeBack(this.total_week_time);
-      this.monday_total = this.changeBack(this.monday_total);
-      this.tuesday_total = this.changeBack(this.tuesday_total);
-      this.wednesday_total = this.changeBack(this.wednesday_total);
-      this.thursday_total = this.changeBack(this.thursday_total);
-      this.friday_total = this.changeBack(this.friday_total);
-
-      /*
-      ** Calc things on the sheet
-      */
-      // this.calcMondayWorkTotal();
-      this.calcDifferences();
-      this.currentTimeCalculated();
-      //if this takes longer than projects, template will run into an undefined error
-      // this.workpackageService.getWorkpackagesById(ArrayOfWorkpackages).subscribe(data => {
-      //   this.workpackages = data;
-        // console.log(`Timesheet Component: this.workpackage: ${JSON.stringify(this.workpackages)}`);
-        
-        this.projectService.getProjectsById(ArrayOfProjects).subscribe(data => {
-          this.projects = data;
-          // console.log(`Timesheet Component: this.projects: ${JSON.stringify(this.projects)}`);
         });
-      // });
+
+        this.total_week_time = this.changeBack(this.total_week_time);
+        this.monday_total = this.changeBack(this.monday_total);
+        this.tuesday_total = this.changeBack(this.tuesday_total);
+        this.wednesday_total = this.changeBack(this.wednesday_total);
+        this.thursday_total = this.changeBack(this.thursday_total);
+        this.friday_total = this.changeBack(this.friday_total);
+
+        /*
+        ** Calc things on the sheet
+        */
+        this.calcDifferences();
+        this.currentTimeCalculated();
+        
+        this.projectService.getProjectsById(ArrayOfProjects).subscribe(data => { this.timesheetProjects = data; });
       }
       
     });
@@ -473,6 +447,17 @@ recalcThings(item) {
 
     this.initTimeSheet(this.weekNumber);
 
+  }
+
+  update(timesheet) {
+
+    this.timesheetService.updateTimesheet(timesheet).subscribe(data => this.timesheet = data);
+
+    if (this.timesheet = timesheet) {
+      console.log(`timesheet: both timesheets are the same after put;`);
+    } else {
+      console.warn(`timesheet: both timesheetss are NOT the same after put;`);
+    }
   }
 
   ngOnInit() {

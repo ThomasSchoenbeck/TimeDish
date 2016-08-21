@@ -1,0 +1,16 @@
+.projectComponent {
+  box-shadow: 0 4px 6px 0;
+  padding: 15px 20px;
+  background: white;
+  width:200px;
+  margin-bottom: 30px;
+}
+
+.project {
+  font-size:12px;
+  text-decoration: line-through;
+}
+
+.activeProject {
+  text-decoration: none;
+}
